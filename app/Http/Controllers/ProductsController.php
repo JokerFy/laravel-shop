@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use function foo\func;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\OrderItem;
-use function foo\func;
 use Illuminate\Http\Request;
 use App\Exceptions\InvalidRequestException;
 
@@ -23,7 +23,7 @@ class ProductsController extends Controller
                 // 则筛选出该父类目下所有子类目的商品
                 $builder->whereHas('category', function ($query) use ($category) {
                     // 这里的逻辑参考本章第一节
-                    $query->where('path', 'like', $category->path.$category->id.'-%');
+                    $query->where('path', 'like', $category->path . $category->id . '-%');
                 });
             } else {
                 // 如果这不是一个父类目，则直接筛选此类目下的商品
@@ -66,7 +66,7 @@ class ProductsController extends Controller
                 'order' => $order,
             ],
             // 等价于 isset($category) ? $category : null
-            'category' => $category ?? null
+            'category' => $category ?? null,
         ]);
     }
 
