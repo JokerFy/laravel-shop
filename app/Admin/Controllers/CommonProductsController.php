@@ -6,6 +6,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use App\Models\Product;
 use App\Models\Category;
+use App\Jobs\SyncOneProductToES;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
@@ -95,8 +96,9 @@ abstract class CommonProductsController extends Controller
             $form->text('value', '属性值')->rules('required');
         });
 
-        $form->saving(function (Form $form) {
-            $form->model()->price = collect($form->input('skus'))->where(Form::REMOVE_FLAG_NAME, 0)->min('price') ?: 0;
+        $form->saved(function (Form $form) {
+            $product = $form->model();
+            $this->dispatch(new SyncOneProductToES($product));
         });
 
         return $form;
